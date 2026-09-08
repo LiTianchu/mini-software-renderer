@@ -5,8 +5,6 @@ const TGAColor BLUE = TGAColor(0, 0, 255, 255);
 
 void Engine::render_shaded_model(const HEModel &model, Shader *shader,
                                  TGAImage *frame_buffer) const {
-  // TGAImage frame_buffer = TGAImage(img_w, img_h, TGAImage::RGB);
-
   // for each face in the model
   for (std::set<Face *>::iterator face_itr = model.faces_begin();
        face_itr != model.faces_end(); ++face_itr) {

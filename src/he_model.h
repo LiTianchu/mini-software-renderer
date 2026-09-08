@@ -104,6 +104,13 @@ private:
 
 public:
   HEModel(const char *filename);
+
+  // explicitly delete copy constructor and copy assignment operator
+  // as HEModel contains raw pointers and should not be copied
+  // to prevent double free errors
+  HEModel(const HEModel &) = delete;
+  HEModel &operator=(const HEModel &) = delete;
+
   ~HEModel();
   const std::set<HEdge *>::iterator h_edges_begin() const {
     return h_edges.begin();

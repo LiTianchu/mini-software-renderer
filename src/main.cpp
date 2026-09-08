@@ -294,6 +294,8 @@ int main(int argc, char **argv) {
               << std::endl;
     std::cout << "  model (optional): head|african_head (default), diablo3_pose"
               << std::endl;
+
+    delete[] zbuffer;
   }
   std::cout << "Writing rendered output..." << std::endl;
 

@@ -7,7 +7,8 @@
 #include <vector>
 
 HEModel::HEModel(const char *filename)
-    : h_edges(), faces(), vertices() { // constructor definition
+    : h_edges(), faces(), vertices(), diffuse_texture(nullptr),
+      normal_map_texture(nullptr) { // constructor definition
   std::cout << "Loading Half-Edge model..." << std::endl;
   std::ifstream in;
   in.open(filename, std::ifstream::in);
@@ -74,6 +75,7 @@ HEModel::HEModel(const char *filename)
         // if has duplicate value in the set, then reference v to that duplicate
         // value
         if (!pair.second) {
+          delete v;
           v = *pair.first; // refer the v pointer to the already stored vertex
         }
         tri.push_back(v);
@@ -151,6 +153,7 @@ HEModel::HEModel(const char *filename)
         // retrieve the half edge and pair the edges to each other
         h_edges_temp[j]->pair = ((*insert_result.first)->h);
         ((*insert_result.first)->h)->pair = h_edges_temp[j];
+        delete e;
       }
 
       h_edges_temp[j]->index = h_edges.size();
@@ -161,6 +164,11 @@ HEModel::HEModel(const char *filename)
     f->h = h_edges_temp[0]; // set the face's half edge to the first half edge
     f->index = faces.size();
     faces.insert(f); // add the face to the list of faces
+  }
+
+  // the temporary edges are only needed while matching half-edge pairs
+  for (Edge *edge : edges_temp) {
+    delete edge;
   }
 
   std::cout << "Half-Edge model loading finished, analysis below:" << std::endl;
@@ -194,4 +202,15 @@ HEModel::HEModel(const char *filename)
             << std::endl;
 }
 
-HEModel::~HEModel() {}
+// delete all the half edge resources
+HEModel::~HEModel() {
+  for (HEdge *h_edge : h_edges) {
+    delete h_edge;
+  }
+  for (Face *face : faces) {
+    delete face;
+  }
+  for (Vertex *vertex : vertices) {
+    delete vertex;
+  }
+}
