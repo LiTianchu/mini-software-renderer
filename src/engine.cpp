@@ -1,13 +1,10 @@
 #include "engine.h"
 #include "math.h"
 
-const TGAColor white = TGAColor(255, 255, 255, 255);
-const TGAColor red = TGAColor(255, 0, 0, 255);
-const TGAColor green = TGAColor(0, 255, 0, 255);
-const TGAColor blue = TGAColor(0, 0, 255, 255);
+const TGAColor BLUE = TGAColor(0, 0, 255, 255);
 
-void Engine::render_shaded_model(HEModel model, Shader *shader,
-                                 TGAImage *frame_buffer) {
+void Engine::render_shaded_model(const HEModel &model, Shader *shader,
+                                 TGAImage *frame_buffer) const {
   // TGAImage frame_buffer = TGAImage(img_w, img_h, TGAImage::RGB);
 
   // for each face in the model
@@ -38,15 +35,21 @@ void Engine::render_shaded_model(HEModel model, Shader *shader,
 
     rasterize_triangle(processed_vertices, shader, frame_buffer);
   }
+  delete shader;
 }
 
-void Engine::render_model_wireframe(HEModel model, TGAImage *frame_buffer) {
+void Engine::render_model_wireframe(const HEModel &model,
+                                    TGAImage *frame_buffer) const {
+  if (model.num_of_faces() == 0) {
+    return;
+  }
+
   bool faces_visited[model.num_of_faces()] = {false};
   Engine::wireframe_dfs(**model.faces_begin(), faces_visited, frame_buffer);
 }
 
 void Engine::wireframe_dfs(const Face &f, bool (&faces_visited)[],
-                           TGAImage *frame_buffer) {
+                           TGAImage *frame_buffer) const {
   if (faces_visited[f.index]) {
     return;
   }
@@ -73,7 +76,7 @@ void Engine::wireframe_dfs(const Face &f, bool (&faces_visited)[],
     int x1 = (pos_end.x + 1.0) / 2.0 * frame_buffer->get_width();
     int y1 = (pos_end.y + 1.0) / 2.0 * frame_buffer->get_height();
 
-    draw_line(x0, y0, x1, y1, blue, frame_buffer);
+    draw_line(x0, y0, x1, y1, BLUE, frame_buffer);
     h_edge = h_edge->next;
   } while (h_edge != f.h);
 
@@ -85,7 +88,7 @@ void Engine::wireframe_dfs(const Face &f, bool (&faces_visited)[],
 }
 
 void Engine::rasterize_triangle(std::vector<V2F> vert_data, Shader *shader,
-                                TGAImage *frame_buffer) {
+                                TGAImage *frame_buffer) const {
   //  extract the vertex data
   Vec3f pts[] = {vert_data[0].pos, vert_data[1].pos, vert_data[2].pos};
   float z_indices[] = {vert_data[0].pos.z, vert_data[1].pos.z,
@@ -161,7 +164,7 @@ void Engine::rasterize_triangle(std::vector<V2F> vert_data, Shader *shader,
 }
 
 void Engine::draw_line(int x0, int y0, int x1, int y1, TGAColor color,
-                       TGAImage *frame_buffer) {
+                       TGAImage *frame_buffer) const {
   bool steep = false;
   /*if y is greator than x, the line drawn will have gaps,
   so need to swap the x and y coordinates before drawing*/

@@ -1,10 +1,10 @@
 #include "shader.h"
 
-class Flat_Shader : public Shader {
+class FlatShader : public Shader {
 public:
-  Flat_Shader() {}
-  Flat_Shader(Shader_Global_Payload &payload) : Shader(payload) {}
-  ~Flat_Shader() = default;
+  FlatShader() {}
+  FlatShader(ShaderGlobalPayload &payload) : Shader(payload) {}
+  ~FlatShader() = default;
 
   virtual V2F vertex_shader(const Vertex &vertex_input) {
     V2F processed_v;

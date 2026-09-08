@@ -19,10 +19,6 @@
 #define M_PI 3.14159265358979323846
 #endif
 
-const TGAColor white = TGAColor(255, 255, 255, 255);
-const TGAColor red = TGAColor(255, 0, 0, 255);
-const TGAColor green = TGAColor(0, 255, 0, 255);
-const TGAColor blue = TGAColor(0, 0, 255, 255);
 Vec3f camera_pos = Vec3f(1, 1, 3);
 Vec3f light_dir = Vec3f(1, 1, 1);
 float main_light_intensity = 2.0f;
@@ -90,7 +86,7 @@ int main(int argc, char **argv) {
     Engine engine = Engine(light_dir.normalize(), runtime_light_intensity,
                            camera_pos, zbuffer);
 
-    Shader_Global_Payload shader_payload = Shader_Global_Payload();
+    ShaderGlobalPayload shader_payload = ShaderGlobalPayload();
     shader_payload.main_light_dir = light_dir.normalize();
     shader_payload.main_light_intensity = runtime_light_intensity;
     shader_payload.camera_pos = camera_pos;
@@ -126,14 +122,14 @@ int main(int argc, char **argv) {
       engine.render_model_wireframe(he_model_loaded, &image);
     } else if (mode == "flat") {
       engine.render_shaded_model(he_model_loaded,
-                                 new Flat_Shader(shader_payload), &image);
+                                 new FlatShader(shader_payload), &image);
     } else if (mode == "smooth") {
       engine.render_shaded_model(he_model_loaded,
-                                 new Gouraud_Shader(shader_payload), &image);
+                                 new GouraudShader(shader_payload), &image);
     } else if (mode == "texture") {
       // texture.read_tga_file("obj/diablo3_pose/diablo3_pose_diffuse.tga");
-      engine.render_shaded_model(
-          he_model_loaded, new Diffuse_Map_Shader(shader_payload), &image);
+      engine.render_shaded_model(he_model_loaded,
+                                 new DiffuseMapShader(shader_payload), &image);
     }
     // else if (std::string(argv[1]) == "shaded-wireframe")
     // {
@@ -142,22 +138,22 @@ int main(int argc, char **argv) {
     //     engine.render_model_wireframe(he_model_loaded, &image);
     // }
     else if (mode == "uv") {
-      engine.render_shaded_model(he_model_loaded, new UV_Shader(shader_payload),
+      engine.render_shaded_model(he_model_loaded, new UVShader(shader_payload),
                                  &image);
     } else if (mode == "normal") {
       engine.render_shaded_model(he_model_loaded,
-                                 new Normal_Map_Shader(shader_payload), &image);
+                                 new NormalMapShader(shader_payload), &image);
     } else if (mode == "depth") {
       engine.render_shaded_model(he_model_loaded,
-                                 new Depth_Shader(shader_payload), &image);
+                                 new DepthShader(shader_payload), &image);
     } else if (mode == "shadowmap") {
       // shadow mapping
 
       engine.render_shaded_model(he_model_loaded,
-                                 new Normal_Map_Shader(shader_payload), &image);
+                                 new NormalMapShader(shader_payload), &image);
       engine.reset_zbuffer(img_w, img_h);
       // shadow mapping first pass
-      Shader_Global_Payload shadow_payload = Shader_Global_Payload();
+      ShaderGlobalPayload shadow_payload = ShaderGlobalPayload();
       Matrix shadow_view = Matrix::model_view(
           light_dir, center_pos,
           up_dir); // take the depth buffer from the light position
@@ -170,7 +166,7 @@ int main(int argc, char **argv) {
       TGAImage shadow_buffer =
           TGAImage(image.get_width(), image.get_height(), TGAImage::RGB);
       engine.render_shaded_model(
-          he_model_loaded, new Depth_Shader(shadow_payload), &shadow_buffer);
+          he_model_loaded, new DepthShader(shadow_payload), &shadow_buffer);
       engine.reset_zbuffer(img_w, img_h);
 
       // shadow mapping second pass
@@ -179,12 +175,12 @@ int main(int argc, char **argv) {
       shader_payload.screen_shadow_mat = screen_shadow_mat;
       shader_payload.shadow_buffer = &shadow_buffer;
       engine.render_shaded_model(he_model_loaded,
-                                 new Normal_Map_Shader(shader_payload), &image);
+                                 new NormalMapShader(shader_payload), &image);
       // image = shadow_buffer;
     } else if (mode == "complete") {
       // complete = normal mapping + shadow mapping + SSAO (post-pass)
       // 1) build shadow buffer (depth from light view)
-      Shader_Global_Payload shadow_payload = Shader_Global_Payload();
+      ShaderGlobalPayload shadow_payload = ShaderGlobalPayload();
       Matrix shadow_view = Matrix::model_view(light_dir, center_pos, up_dir);
       Matrix shadow_viewport = Matrix::viewport(0, 0, img_w, img_h, near, far);
       Matrix shadow_transform = shadow_viewport * shadow_view;
@@ -194,7 +190,7 @@ int main(int argc, char **argv) {
       TGAImage shadow_buffer =
           TGAImage(image.get_width(), image.get_height(), TGAImage::RGB);
       engine.render_shaded_model(
-          he_model_loaded, new Depth_Shader(shadow_payload), &shadow_buffer);
+          he_model_loaded, new DepthShader(shadow_payload), &shadow_buffer);
       engine.reset_zbuffer(img_w, img_h);
 
       // 2) render lit model with shadow mapping enabled
@@ -203,7 +199,7 @@ int main(int argc, char **argv) {
       shader_payload.screen_shadow_mat = screen_shadow_mat;
       shader_payload.shadow_buffer = &shadow_buffer;
       engine.render_shaded_model(he_model_loaded,
-                                 new Normal_Map_Shader(shader_payload), &image);
+                                 new NormalMapShader(shader_payload), &image);
 
       // 3) SSAO post-pass: compute AO from current zbuffer and multiply the
       // shaded image
@@ -247,7 +243,7 @@ int main(int argc, char **argv) {
     } else if (mode == "ssao") {
       // screen space ambient occlusion
       engine.render_shaded_model(he_model_loaded,
-                                 new Empty_Shader(shader_payload), &image);
+                                 new EmptyShader(shader_payload), &image);
       // keep the z buffer
 
       float *current_zbuffer = engine.get_engine_data().z_buffer;

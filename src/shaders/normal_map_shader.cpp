@@ -1,10 +1,10 @@
 #include "shader.h"
 
-class Normal_Map_Shader : public Shader {
+class NormalMapShader : public Shader {
 public:
-  Normal_Map_Shader() {}
-  Normal_Map_Shader(Shader_Global_Payload &payload) : Shader(payload) {}
-  ~Normal_Map_Shader() = default;
+  NormalMapShader() {}
+  NormalMapShader(ShaderGlobalPayload &payload) : Shader(payload) {}
+  ~NormalMapShader() = default;
 
   virtual V2F vertex_shader(const Vertex &vertex_input) {
     V2F processed_v;

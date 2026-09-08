@@ -90,6 +90,10 @@ template <class t> struct Vec3 : Vec<t> {
     return Vec3<t>{x * other.x, y * other.y, z * other.z};
   }
   Vec3<t> &normalize(t l = 1) {
+    if (z == 0 && y == 0 && x == 0) {
+      return *this;
+    }
+
     *this = (*this) * (l / norm());
     return *this;
   }

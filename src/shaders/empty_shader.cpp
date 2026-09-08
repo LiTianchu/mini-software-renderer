@@ -1,10 +1,10 @@
 #include "shader.h"
 
-class Empty_Shader : public Shader {
+class EmptyShader : public Shader {
 public:
-  Empty_Shader() {}
-  Empty_Shader(Shader_Global_Payload &payload) : Shader(payload) {}
-  ~Empty_Shader() = default;
+  EmptyShader() {}
+  EmptyShader(ShaderGlobalPayload &payload) : Shader(payload) {}
+  ~EmptyShader() = default;
 
   virtual V2F vertex_shader(const Vertex &vertex_input) {
     V2F processed_v;

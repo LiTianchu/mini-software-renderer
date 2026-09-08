@@ -1,10 +1,10 @@
 #include "shader.h"
 
-class Depth_Shader : public Shader {
+class DepthShader : public Shader {
 public:
-  Depth_Shader() {}
-  Depth_Shader(Shader_Global_Payload &payload) : Shader(payload) {}
-  ~Depth_Shader() = default;
+  DepthShader() {}
+  DepthShader(ShaderGlobalPayload &payload) : Shader(payload) {}
+  ~DepthShader() = default;
 
   virtual V2F vertex_shader(const Vertex &vertex_input) {
     V2F processed_v;

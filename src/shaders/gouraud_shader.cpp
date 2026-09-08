@@ -1,10 +1,10 @@
 #include "shader.h"
 
-class Gouraud_Shader : public Shader {
+class GouraudShader : public Shader {
 public:
-  Gouraud_Shader() {}
-  Gouraud_Shader(Shader_Global_Payload &payload) : Shader(payload) {}
-  ~Gouraud_Shader() = default;
+  GouraudShader() {}
+  GouraudShader(ShaderGlobalPayload &payload) : Shader(payload) {}
+  ~GouraudShader() = default;
 
   virtual V2F vertex_shader(const Vertex &vertex_input) {
     V2F processed_v;

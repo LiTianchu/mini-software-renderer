@@ -1,10 +1,10 @@
 #include "shader.h"
 
-class UV_Shader : public Shader {
+class UVShader : public Shader {
 public:
-  UV_Shader() {}
-  UV_Shader(Shader_Global_Payload &payload) : Shader(payload) {}
-  ~UV_Shader() = default;
+  UVShader() {}
+  UVShader(ShaderGlobalPayload &payload) : Shader(payload) {}
+  ~UVShader() = default;
 
   virtual V2F vertex_shader(const Vertex &vertex_input) {
     V2F processed_v;

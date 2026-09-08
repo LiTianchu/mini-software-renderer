@@ -74,19 +74,19 @@ struct Vertex {
   }
 };
 
-struct HEdge_Compare {
+struct HEdgeCompare {
   bool operator()(const HEdge *a, HEdge *b) const {
     return a->index < b->index;
   }
 };
 
-struct Face_Compare {
+struct FaceCompare {
   bool operator()(const Face *a, const Face *b) const {
     return a->index < b->index;
   }
 };
 
-struct Vertex_Compare {
+struct VertexCompare {
   bool operator()(const Vertex *a, const Vertex *b) const {
     // it will equal when the position index and uv index are the same
     return a->pos_index < b->pos_index ||
@@ -96,24 +96,32 @@ struct Vertex_Compare {
 
 class HEModel {
 private:
-  std::set<HEdge *, HEdge_Compare> h_edges;
-  std::set<Face *, Face_Compare> faces;
-  std::set<Vertex *, Vertex_Compare> vertices;
+  std::set<HEdge *, HEdgeCompare> h_edges;
+  std::set<Face *, FaceCompare> faces;
+  std::set<Vertex *, VertexCompare> vertices;
   TGAImage *diffuse_texture;
   TGAImage *normal_map_texture;
 
 public:
   HEModel(const char *filename);
   ~HEModel();
-  std::set<HEdge *>::iterator h_edges_begin() { return h_edges.begin(); }
-  std::set<HEdge *>::iterator h_edges_end() { return h_edges.end(); }
-  std::set<Face *>::iterator faces_begin() { return faces.begin(); }
-  std::set<Face *>::iterator faces_end() { return faces.end(); }
-  std::set<Vertex *>::iterator vertices_begin() { return vertices.begin(); }
-  std::set<Vertex *>::iterator vertices_end() { return vertices.end(); }
-  int num_of_h_edges() { return h_edges.size(); }
-  int num_of_faces() { return faces.size(); }
-  int num_of_vertices() { return vertices.size(); }
+  const std::set<HEdge *>::iterator h_edges_begin() const {
+    return h_edges.begin();
+  }
+  const std::set<HEdge *>::iterator h_edges_end() const {
+    return h_edges.end();
+  }
+  const std::set<Face *>::iterator faces_begin() const { return faces.begin(); }
+  const std::set<Face *>::iterator faces_end() const { return faces.end(); }
+  const std::set<Vertex *>::iterator vertices_begin() const {
+    return vertices.begin();
+  }
+  const std::set<Vertex *>::iterator vertices_end() const {
+    return vertices.end();
+  }
+  int num_of_h_edges() const { return h_edges.size(); }
+  int num_of_faces() const { return faces.size(); }
+  int num_of_vertices() const { return vertices.size(); }
   TGAImage *get_diffuse_texture() { return diffuse_texture; }
   TGAImage *get_normal_map_texture() { return normal_map_texture; }
   void set_diffuse_texture(TGAImage *diffuse_texture_) {

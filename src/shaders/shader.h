@@ -8,7 +8,7 @@
 #include <algorithm>
 #include <vector>
 
-struct Shader_Global_Payload {
+struct ShaderGlobalPayload {
   Vec3f main_light_dir;
   float main_light_intensity;
   Vec3f camera_pos;
@@ -38,13 +38,11 @@ struct V2F {
 
 class Shader {
 public:
-  Shader_Global_Payload global_payload;
+  ShaderGlobalPayload global_payload;
   Shader() {}
 
-  Shader(Shader_Global_Payload &payload) { global_payload = payload; }
-
-  virtual ~Shader() {}
-
+  Shader(ShaderGlobalPayload &payload) { global_payload = payload; }
+  virtual ~Shader() = default;
   virtual V2F vertex_shader(const Vertex &vertex_input) = 0;
   virtual Vec3i fragment_shader(const V2F &processed_vertex) = 0;
 };
